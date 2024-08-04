@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Build Docker Image
 
 on:
   push:
@@ -7,20 +7,28 @@ on:
 
 jobs:
   build:
+    name: Push Docker Image to Docker Hub
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout do código
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Configurar Docker Hub credenciais
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Login to Docker Hub
+        id: docker-hub
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        run: |
+          docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
 
-      - name: Build da imagem Docker
-        run: docker build -t my-dockerhub-username/sauter-university:latest .
+      - name: Build Docker Image
+        id: build-docker-image
+        run: |
+          ls -la  
+          docker build -f Dockerfile -t $DOCKERHUB_USERNAME/sauter-university:latest .
 
-      - name: Publicar imagem no Docker Hub
-        run: docker push my-dockerhub-username/sauter-university:latest
+      - name: Push Docker Image
+        id: push-docker-image
+        run: |
+          docker push $DOCKERHUB_USERNAME/sauter-university:latest
