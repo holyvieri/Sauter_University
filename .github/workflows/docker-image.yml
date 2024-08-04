@@ -23,4 +23,4 @@ jobs:
         run: docker build -t my-dockerhub-username/sauter-university:latest .
 
       - name: Publicar imagem no Docker Hub
-        run: docker push ${{secrets.DOCKERHUB_USERNAME}}/sauter-university:latest
+        run: docker push my-dockerhub-username/sauter-university:latest
